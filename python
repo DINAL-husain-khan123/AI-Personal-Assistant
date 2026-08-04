@@ -1,0 +1,74 @@
+from flask import Flask, render_template, request, jsonify
+import pyttsx3
+import wikipedia
+import webbrowser
+import datetime
+
+app = Flask(__name__)
+
+engine = pyttsx3.init()
+engine.setProperty("rate", 170)
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/command", methods=["POST"])
+def command():
+
+    data = request.get_json()
+
+    command = data["command"].lower()
+
+    response = ""
+
+    if "time" in command:
+        response = datetime.datetime.now().strftime("%I:%M %p")
+
+    elif "date" in command:
+        response = datetime.datetime.now().strftime("%d %B %Y")
+
+    elif "google" in command:
+        query = command.replace("google", "")
+        webbrowser.open(f"https://www.google.com/search?q={query}")
+        response = "Opening Google"
+
+    elif "youtube" in command:
+        query = command.replace("youtube", "")
+        webbrowser.open(f"https://www.youtube.com/results?search_query={query}")
+        response = "Opening YouTube"
+
+    elif "wikipedia" in command:
+        try:
+            query = command.replace("wikipedia", "")
+            response = wikipedia.summary(query, sentences=2)
+        except:
+            response = "No information found."
+
+    elif "github" in command:
+        webbrowser.open("https://github.com")
+        response = "Opening GitHub"
+
+    elif "chatgpt" in command:
+        webbrowser.open("https://chat.openai.com")
+        response = "Opening ChatGPT"
+
+    elif "calculator" in command:
+        webbrowser.open("calculator:")
+        response = "Opening Calculator"
+
+    else:
+        response = "Sorry, I don't understand that command."
+
+    speak(response)
+
+    return jsonify({
+        "response": response
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)
