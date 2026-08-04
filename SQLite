@@ -1,0 +1,202 @@
+import sqlite3
+
+DATABASE = "database/assistant.db"
+
+
+def get_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def create_tables():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # User Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        email TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Chat History
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_history(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_message TEXT NOT NULL,
+        assistant_reply TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Notes
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS notes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        content TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Reminders
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS reminders(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        reminder TEXT,
+        reminder_time TEXT,
+        status TEXT DEFAULT 'Pending'
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+# -----------------------------
+# Chat History
+# -----------------------------
+
+def save_chat(user_message, assistant_reply):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO chat_history(user_message, assistant_reply)
+    VALUES(?,?)
+    """, (user_message, assistant_reply))
+
+    conn.commit()
+    conn.close()
+
+
+def get_chat_history():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT * FROM chat_history
+    ORDER BY id DESC
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return rows
+
+
+# -----------------------------
+# Notes
+# -----------------------------
+
+def add_note(title, content):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO notes(title, content)
+    VALUES(?,?)
+    """, (title, content))
+
+    conn.commit()
+    conn.close()
+
+
+def get_notes():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT * FROM notes
+    ORDER BY id DESC
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return rows
+
+
+# -----------------------------
+# Reminders
+# -----------------------------
+
+def add_reminder(reminder, reminder_time):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO reminders(reminder, reminder_time)
+    VALUES(?,?)
+    """, (reminder, reminder_time))
+
+    conn.commit()
+    conn.close()
+
+
+def get_reminders():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT * FROM reminders
+    ORDER BY id DESC
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return rows
+
+
+def mark_completed(reminder_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE reminders
+    SET status='Completed'
+    WHERE id=?
+    """, (reminder_id,))
+
+    conn.commit()
+    conn.close()
+
+
+# -----------------------------
+# Delete Functions
+# -----------------------------
+
+def delete_note(note_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DELETE FROM notes
+    WHERE id=?
+    """, (note_id,))
+
+    conn.commit()
+    conn.close()
+
+
+def delete_chat(chat_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DELETE FROM chat_history
+    WHERE id=?
+    """, (chat_id,))
+
+    conn.commit()
+    conn.close()
+
+
+if __name__ == "__main__":
+    create_tables()
+    print("Database created successfully.")
