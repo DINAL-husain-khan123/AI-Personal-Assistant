@@ -1,0 +1,261 @@
+import pyttsx3
+import logging
+from datetime import datetime
+
+
+class TextToSpeech:
+
+    def __init__(self):
+
+        logging.basicConfig(
+            filename="assistant.log",
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s"
+        )
+
+        self.engine = pyttsx3.init()
+
+        self.engine.setProperty("rate", 170)
+
+        self.engine.setProperty("volume", 1.0)
+
+        self.voices = self.engine.getProperty("voices")
+
+        self.engine.setProperty("voice", self.voices[0].id)
+
+    ##################################################
+
+    def speak(self, text):
+
+        try:
+
+            print("Assistant :", text)
+
+            logging.info(text)
+
+            self.engine.say(text)
+
+            self.engine.runAndWait()
+
+        except Exception as e:
+
+            logging.error(e)
+
+    ##################################################
+
+    def speak_multiple(self, messages):
+
+        try:
+
+            for message in messages:
+
+                print("Assistant :", message)
+
+                self.engine.say(message)
+
+            self.engine.runAndWait()
+
+        except Exception as e:
+
+            logging.error(e)
+
+    ##################################################
+
+    def set_rate(self, rate):
+
+        self.engine.setProperty("rate", rate)
+
+    ##################################################
+
+    def increase_rate(self):
+
+        rate = self.engine.getProperty("rate")
+
+        self.engine.setProperty("rate", rate + 20)
+
+    ##################################################
+
+    def decrease_rate(self):
+
+        rate = self.engine.getProperty("rate")
+
+        self.engine.setProperty("rate", rate - 20)
+
+    ##################################################
+
+    def set_volume(self, volume):
+
+        if 0 <= volume <= 1:
+
+            self.engine.setProperty("volume", volume)
+
+    ##################################################
+
+    def increase_volume(self):
+
+        volume = self.engine.getProperty("volume")
+
+        if volume < 1:
+
+            volume += 0.1
+
+            self.engine.setProperty("volume", volume)
+
+    ##################################################
+
+    def decrease_volume(self):
+
+        volume = self.engine.getProperty("volume")
+
+        if volume > 0:
+
+            volume -= 0.1
+
+            self.engine.setProperty("volume", volume)
+
+    ##################################################
+
+    def male_voice(self):
+
+        self.engine.setProperty("voice", self.voices[0].id)
+
+    ##################################################
+
+    def female_voice(self):
+
+        if len(self.voices) > 1:
+
+            self.engine.setProperty("voice", self.voices[1].id)
+
+    ##################################################
+
+    def list_voices(self):
+
+        print("\nAvailable Voices\n")
+
+        for index, voice in enumerate(self.voices):
+
+            print(index)
+
+            print("Name :", voice.name)
+
+            print("ID :", voice.id)
+
+            print("----------------------")
+
+    ##################################################
+
+    def save_audio(self, text, filename):
+
+        try:
+
+            self.engine.save_to_file(text, filename)
+
+            self.engine.runAndWait()
+
+            print("Audio Saved")
+
+        except Exception as e:
+
+            logging.error(e)
+
+    ##################################################
+
+    def wish(self):
+
+        hour = datetime.now().hour
+
+        if hour < 12:
+
+            self.speak("Good Morning")
+
+        elif hour < 17:
+
+            self.speak("Good Afternoon")
+
+        else:
+
+            self.speak("Good Evening")
+
+    ##################################################
+
+    def stop(self):
+
+        self.engine.stop()
+
+    ##################################################
+
+    def about(self):
+
+        self.speak("Hello I am your Artificial Intelligence Personal Assistant.")
+
+    ##################################################
+
+    def demo(self):
+
+        self.wish()
+
+        self.about()
+
+        self.speak("I can search Google.")
+
+        self.speak("I can search Wikipedia.")
+
+        self.speak("I can open applications.")
+
+        self.speak("I can tell time and date.")
+
+        self.speak("I can answer your questions.")
+
+    ##################################################
+
+    def test(self):
+
+        self.speak("Testing voice.")
+
+        self.increase_rate()
+
+        self.speak("This is faster.")
+
+        self.decrease_rate()
+
+        self.speak("Back to normal.")
+
+        self.increase_volume()
+
+        self.speak("Volume increased.")
+
+        self.decrease_volume()
+
+        self.speak("Volume restored.")
+
+    ##################################################
+
+    def goodbye(self):
+
+        self.speak("Goodbye.")
+
+        self.speak("Have a wonderful day.")
+
+        self.stop()
+
+
+########################################################
+
+
+if __name__ == "__main__":
+
+    assistant = TextToSpeech()
+
+    assistant.list_voices()
+
+    assistant.demo()
+
+    assistant.test()
+
+    assistant.save_audio(
+        "Welcome to AI Personal Assistant",
+        "welcome.mp3"
+    )
+
+    assistant.goodbye()
