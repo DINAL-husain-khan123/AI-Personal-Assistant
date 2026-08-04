@@ -1,0 +1,195 @@
+import webbrowser
+import wikipedia
+import urllib.parse
+
+
+class BrowserAssistant:
+
+    def __init__(self):
+        pass
+
+    # -------------------------
+    # Google Search
+    # -------------------------
+    def google_search(self, query):
+
+        query = urllib.parse.quote(query)
+
+        url = f"https://www.google.com/search?q={query}"
+
+        webbrowser.open(url)
+
+        return f"Searching Google for {query}"
+
+
+    # -------------------------
+    # YouTube Search
+    # -------------------------
+    def youtube_search(self, query):
+
+        query = urllib.parse.quote(query)
+
+        url = f"https://www.youtube.com/results?search_query={query}"
+
+        webbrowser.open(url)
+
+        return f"Searching YouTube for {query}"
+
+
+    # -------------------------
+    # Wikipedia Search
+    # -------------------------
+    def wikipedia_search(self, query):
+
+        try:
+
+            result = wikipedia.summary(query, sentences=3)
+
+            return result
+
+        except Exception:
+
+            return "No Wikipedia information found."
+
+
+    # -------------------------
+    # Open GitHub
+    # -------------------------
+    def open_github(self):
+
+        webbrowser.open("https://github.com")
+
+        return "Opening GitHub"
+
+
+    # -------------------------
+    # Open Gmail
+    # -------------------------
+    def open_gmail(self):
+
+        webbrowser.open("https://mail.google.com")
+
+        return "Opening Gmail"
+
+
+    # -------------------------
+    # Open ChatGPT
+    # -------------------------
+    def open_chatgpt(self):
+
+        webbrowser.open("https://chat.openai.com")
+
+        return "Opening ChatGPT"
+
+
+    # -------------------------
+    # Open Stack Overflow
+    # -------------------------
+    def open_stackoverflow(self):
+
+        webbrowser.open("https://stackoverflow.com")
+
+        return "Opening Stack Overflow"
+
+
+    # -------------------------
+    # Open LinkedIn
+    # -------------------------
+    def open_linkedin(self):
+
+        webbrowser.open("https://linkedin.com")
+
+        return "Opening LinkedIn"
+
+
+    # -------------------------
+    # Open Facebook
+    # -------------------------
+    def open_facebook(self):
+
+        webbrowser.open("https://facebook.com")
+
+        return "Opening Facebook"
+
+
+    # -------------------------
+    # Open Instagram
+    # -------------------------
+    def open_instagram(self):
+
+        webbrowser.open("https://instagram.com")
+
+        return "Opening Instagram"
+
+
+    # -------------------------
+    # Open Twitter/X
+    # -------------------------
+    def open_x(self):
+
+        webbrowser.open("https://x.com")
+
+        return "Opening X"
+
+
+    # -------------------------
+    # Google Maps
+    # -------------------------
+    def open_maps(self, location):
+
+        location = urllib.parse.quote(location)
+
+        url = f"https://www.google.com/maps/search/{location}"
+
+        webbrowser.open(url)
+
+        return f"Opening Google Maps for {location}"
+
+
+    # -------------------------
+    # Open Website
+    # -------------------------
+    def open_website(self, website):
+
+        if not website.startswith("http"):
+
+            website = "https://" + website
+
+        webbrowser.open(website)
+
+        return f"Opening {website}"
+
+
+# -------------------------
+# Testing
+# -------------------------
+
+if __name__ == "__main__":
+
+    browser = BrowserAssistant()
+
+    print(browser.google_search("Python Flask"))
+
+    print(browser.youtube_search("Machine Learning"))
+
+    print(browser.wikipedia_search("Artificial Intelligence"))
+
+    print(browser.open_github())
+
+    print(browser.open_gmail())
+
+    print(browser.open_chatgpt())
+
+    print(browser.open_stackoverflow())
+
+    print(browser.open_linkedin())
+
+    print(browser.open_facebook())
+
+    print(browser.open_instagram())
+
+    print(browser.open_x())
+
+    print(browser.open_maps("Chennai"))
+
+    print(browser.open_website("openai.com"))
